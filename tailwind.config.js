@@ -4,8 +4,17 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      keyframes: {
+        scroll: {
+          '0%': { backgroundPosition: '0% 50%' },
+          '100%': { backgroundPosition: '100% 50%' },
+        },
+      },
+      animation: {
+        scroll: 'scroll 20s linear infinite',
+      },
       backgroundImage: {
-        hero: "url('/gooey-pizza.jpg')",
+        'gooey-pizza': "url('/gooey-pizza.jpg')",
       },
       borderRadius: {
         lg: 'var(--radius)',

@@ -138,11 +138,11 @@ function App() {
   }
 
   return (
-    <div className="bg-hero">
+    <div className="bg-gooey-pizza animate-scroll">
       <header className="mx-auto w-full max-w-screen-lg px-12 pt-12">
-        <h1 className="text-red-500">
-          <span className="bg-yellow-400 p-6">Pan Pizza Recipe Calculator</span>
-        </h1>
+        <span className="inline-block bg-yellow-400 px-4 py-2">
+          <h1 className="text-red-500">Pan Pizza Recipe Calculator</h1>
+        </span>
       </header>
       <main className="mx-auto w-full max-w-screen-lg px-12 py-12">
         <section className="mb-12 rounded border-4 border-yellow-200 bg-white p-12">

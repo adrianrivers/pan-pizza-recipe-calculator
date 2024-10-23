@@ -11,4 +11,4 @@ pnpm dev
 
 https://pan-pizza-recipe-calculator.netlify.app
 
-[![Everything Is AWESOME](https://img.youtube.com/vi/CJEoASUMZbI/0.jpg)](https://www.youtube.com/watch?v=CJEoASUMZbI 'Gimme pizza')
+[![Everything Is AWESOME](https://img.youtube.com/vi/OnVkGwPaS-g/0.jpg)](https://www.youtube.com/watch?v=OnVkGwPaS-g 'Gimme pizza')
