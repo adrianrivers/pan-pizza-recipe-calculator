@@ -19,6 +19,7 @@ import {
 import { Button } from './components/ui/button'
 import { PDFDownloadLink } from '@react-pdf/renderer'
 import { Recipe } from './components/pdf/recipe'
+import { useReward } from 'react-rewards'
 
 export type UnitSystem = 'metric' | 'imperial'
 
@@ -93,6 +94,11 @@ function App() {
   const [numPizzas, setNumPizzas] = useState(1)
   const [unitSystem, setUnitSystem] = useState<UnitSystem>('metric')
 
+  const { reward } = useReward('rewardId', 'emoji', {
+    emoji: ['🍕'],
+    elementSize: 35,
+  })
+
   const measurement = unitSystem === 'metric' ? 'cm' : 'in'
 
   const panDoughVolume = useMemo(() => {
@@ -127,19 +133,19 @@ function App() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.currentTarget
+    reward()
     setPan((prev) => ({ ...prev, [name]: Number(value) }))
   }
 
   return (
-    <>
-      <header>
-        <div className="mx-auto w-full max-w-screen-lg px-12 py-12">
-          <h1>Pan Pizza Recipe Calculator</h1>
-        </div>
-        <div className="relative h-96 bg-hero bg-repeat" />
+    <div className="bg-hero">
+      <header className="mx-auto w-full max-w-screen-lg px-12 pt-12">
+        <h1 className="text-red-500">
+          <span className="bg-yellow-400 p-6">Pan Pizza Recipe Calculator</span>
+        </h1>
       </header>
       <main className="mx-auto w-full max-w-screen-lg px-12 py-12">
-        <section className="mb-12 rounded border-4 border-yellow-200 p-12">
+        <section className="mb-12 rounded border-4 border-yellow-200 bg-white p-12">
           <h2>Your specifications</h2>
 
           <Table className="my-6">
@@ -153,6 +159,10 @@ function App() {
               <TableRow>
                 <TableCell>Width ({measurement})</TableCell>
                 <TableCell>
+                  <span
+                    id="rewardId"
+                    style={{ width: 2, height: 2, background: 'red' }}
+                  />
                   <Input
                     type="number"
                     value={pan.w || ''}
@@ -183,14 +193,22 @@ function App() {
                     type="number"
                     value={numPizzas || ''}
                     name="numPizzas"
-                    onChange={(e) => setNumPizzas(Number(e.target.value))}
+                    onChange={(e) => {
+                      reward()
+                      setNumPizzas(Number(e.target.value))
+                    }}
                   />
                 </TableCell>
               </TableRow>
             </TableBody>
           </Table>
 
-          <Select onValueChange={(value) => setUnitSystem(value as UnitSystem)}>
+          <Select
+            onValueChange={(value) => {
+              reward()
+              setUnitSystem(value as UnitSystem)
+            }}
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue defaultValue={'metric'} placeholder="Metric" />
             </SelectTrigger>
@@ -201,19 +219,19 @@ function App() {
           </Select>
         </section>
 
-        <section className="my-12 rounded border-4 border-red-200 p-12">
+        <section className="my-12 rounded border-4 border-red-200 bg-white p-12">
           <div className="flex justify-between">
             <h2>Dough Recipe</h2>
 
             {recipe && (
-              <Button asChild variant="outline">
+              <Button asChild variant="outline" onClick={() => reward()}>
                 <PDFDownloadLink
                   document={
                     <Recipe
                       recipe={recipe}
                       pan={pan}
                       numPizzas={numPizzas}
-                      unitSystem={unitSystem}
+                      measurement={measurement}
                     />
                   }
                 >
@@ -262,7 +280,7 @@ function App() {
           )}
         </section>
       </main>
-    </>
+    </div>
   )
 }
 

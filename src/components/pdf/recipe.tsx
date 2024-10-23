@@ -1,4 +1,4 @@
-import { Pan, PizzaDoughRecipe, UnitSystem } from '@/App'
+import { Pan, PizzaDoughRecipe } from '@/App'
 import { recipeSteps } from '@/steps/pan-pizza-steps'
 import { Page, Text, View, Document } from '@react-pdf/renderer'
 
@@ -6,12 +6,12 @@ export const Recipe = ({
   recipe,
   pan,
   numPizzas,
-  unitSystem,
+  measurement,
 }: {
   recipe: PizzaDoughRecipe
   pan: Pan
   numPizzas: number
-  unitSystem: UnitSystem
+  measurement: string
 }) => (
   <Document>
     <Page
@@ -40,7 +40,7 @@ export const Recipe = ({
         }}
       >
         Recipe is for {numPizzas} pizza(s) baked in a {pan.w}x{pan.l}{' '}
-        {unitSystem === 'metric' ? 'cm' : 'in'} pan
+        {measurement} pan
       </Text>
 
       {
