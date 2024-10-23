@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -56,11 +57,34 @@
     --chart-5: 340 75% 55%;
   }
 }
+
 @layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  h1,
+  .h1 {
+    @apply scroll-m-20 text-4xl font-extrabold lg:text-5xl;
+  }
+
+  h2,
+  .h2 {
+    @apply pb-2 text-3xl font-semibold;
+  }
+
+  h3,
+  .h3 {
+    @apply scroll-m-20 text-xl font-semibold tracking-tight;
+  }
+
+  p,
+  .p {
+    @apply leading-7 [&:not(:first-child)]:mt-6;
   }
 }

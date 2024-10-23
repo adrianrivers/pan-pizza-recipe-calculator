@@ -1,9 +1,28 @@
 import { useMemo, useState } from 'react'
 import { recipeSteps } from './steps/pan-pizza-steps'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { Input } from './components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Button } from './components/ui/button'
+import { PDFDownloadLink } from '@react-pdf/renderer'
+import { Recipe } from './components/pdf/recipe'
 
-type UnitSystem = 'metric' | 'imperial'
+export type UnitSystem = 'metric' | 'imperial'
 
-interface PizzaDoughPercentage {
+export interface PizzaDoughPercentage {
   breadFlour: number
   wholemealFlour?: number
   diastaticMaltPowder: number
@@ -12,7 +31,11 @@ interface PizzaDoughPercentage {
   salt: number
 }
 
-interface Pan {
+export interface PizzaDoughRecipe extends PizzaDoughPercentage {
+  totalWeight: number
+}
+
+export interface Pan {
   w: number
   l: number
 }
@@ -26,16 +49,43 @@ const seventyFivePercent: PizzaDoughPercentage = {
   salt: 2,
 }
 
-function calculateIngredientWeight(
+function calculateRecipe(
   totalFlourWeight: number,
-  bakersPercentage: number,
-  showDecimal = false,
-) {
-  const ingredientWeight = (totalFlourWeight * bakersPercentage) / 100
+  bakersPercentage: PizzaDoughPercentage,
+): PizzaDoughRecipe {
+  let totalWeight = 0
+  const recipe: PizzaDoughRecipe = {
+    breadFlour: 0,
+    wholemealFlour: 0,
+    diastaticMaltPowder: 0,
+    yeast: 0,
+    water: 0,
+    salt: 0,
+    totalWeight: 0,
+  }
 
-  return showDecimal
-    ? Number(ingredientWeight).toFixed(1)
-    : Math.round(ingredientWeight)
+  for (const [ingredient, percentage] of Object.entries(bakersPercentage)) {
+    const ingredientWeight = (totalFlourWeight * percentage) / 100
+    totalWeight += Math.round(ingredientWeight)
+
+    if (
+      ingredient === 'yeast' ||
+      ingredient === 'salt' ||
+      ingredient === 'diastaticMaltPowder'
+    ) {
+      recipe[ingredient as keyof PizzaDoughRecipe] = Number(
+        ingredientWeight.toFixed(1),
+      )
+      continue
+    }
+
+    recipe[ingredient as keyof PizzaDoughRecipe] = Math.round(ingredientWeight)
+  }
+
+  return {
+    ...recipe,
+    totalWeight,
+  }
 }
 
 function App() {
@@ -72,35 +122,7 @@ function App() {
   const recipe = useMemo(() => {
     if (!totalFlourWeight) return null
 
-    return {
-      ['bread-flour']: calculateIngredientWeight(
-        totalFlourWeight,
-        seventyFivePercent.breadFlour,
-      ),
-      ['wholemeal-flour']: calculateIngredientWeight(
-        totalFlourWeight,
-        seventyFivePercent?.wholemealFlour ?? 0,
-      ),
-      ['diastatic-malt-powder']: calculateIngredientWeight(
-        totalFlourWeight,
-        seventyFivePercent.diastaticMaltPowder,
-        true,
-      ),
-      yeast: calculateIngredientWeight(
-        totalFlourWeight,
-        seventyFivePercent.yeast,
-        true,
-      ),
-      water: calculateIngredientWeight(
-        totalFlourWeight,
-        seventyFivePercent.water,
-      ),
-      salt: calculateIngredientWeight(
-        totalFlourWeight,
-        seventyFivePercent.salt,
-        true,
-      ),
-    }
+    return calculateRecipe(totalFlourWeight, seventyFivePercent)
   }, [totalFlourWeight])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -109,97 +131,128 @@ function App() {
   }
 
   return (
-    <>
-      <h3>Input</h3>
+    <main className="w-full max-w-screen-lg mx-auto px-12 py-12">
+      <h1>Pan Pizza Recipe Calculator</h1>
 
-      <label htmlFor="unit-system">Unit system</label>
-      <select onChange={(e) => setUnitSystem(e.target.value as UnitSystem)}>
-        <option value="metric">Metric</option>
-        <option value="imperial">Imperial</option>
-      </select>
+      <section className="my-12 p-12 border rounded border-gray-100">
+        <Table className="my-6">
+          <TableHeader>
+            <TableRow>
+              <TableHead>Measurement</TableHead>
+              <TableHead>Input</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell>Width ({measurement})</TableCell>
+              <TableCell>
+                <Input
+                  type="number"
+                  value={pan.w || ''}
+                  name="w"
+                  onChange={handleChange}
+                />
+              </TableCell>
+            </TableRow>
 
-      <table className="border-collapse table-auto w-full text-sm">
-        <tbody>
-          <tr>
-            <th className="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left">
-              Width {measurement}
-            </th>
-            <td>
-              <input
-                required
-                min={1}
-                type="number"
-                value={pan.w || ''}
-                name="w"
-                onChange={handleChange}
-              />
-            </td>
-          </tr>
-          <tr>
-            <th>Length {measurement}</th>
-            <td>
-              <input
-                type="number"
-                required
-                min={1}
-                value={pan.l || ''}
-                name="l"
-                onChange={handleChange}
-              />
-            </td>
-          </tr>
-          <tr>
-            <th>Number of pizzas</th>
-            <td>
-              <input
-                type="text"
-                required
-                min={1}
-                placeholder="1"
-                value={numPizzas}
-                onChange={(e) => setNumPizzas(Number(e.currentTarget.value))}
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            <TableRow>
+              <TableCell>Length ({measurement})</TableCell>
+              <TableCell>
+                <Input
+                  type="number"
+                  value={pan.l || ''}
+                  name="l"
+                  onChange={handleChange}
+                />
+              </TableCell>
+            </TableRow>
 
-      <h3>Dough Recipe</h3>
+            <TableRow>
+              <TableCell>Number of pizzas</TableCell>
+              <TableCell>
+                <Input
+                  required
+                  min={1}
+                  type="number"
+                  value={numPizzas || ''}
+                  name="numPizzas"
+                  onChange={(e) => setNumPizzas(Number(e.target.value))}
+                />
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Ingredient</th>
-            <th>Weight (grams)</th>
-          </tr>
-        </thead>
-        <tbody>
+        <Select onValueChange={(value) => setUnitSystem(value as UnitSystem)}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue defaultValue={'metric'} placeholder="Metric" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="metric">Metric</SelectItem>
+            <SelectItem value="imperial">Imperial</SelectItem>
+          </SelectContent>
+        </Select>
+      </section>
+
+      <section className="my-12 p-12 border border-gray-100 rounded">
+        <div className="flex justify-between">
+          <h2>Dough Recipe</h2>
+
           {recipe && (
-            <>
-              {Object.keys(recipe).map((key) => (
-                <tr key={key}>
-                  <td style={{ textTransform: 'capitalize' }}>
-                    {key.replace(/-/g, ' ')}
-                  </td>
-                  <td>{recipe[key as keyof typeof recipe]}</td>
-                </tr>
-              ))}
-            </>
+            <Button asChild variant="outline">
+              <PDFDownloadLink
+                document={
+                  <Recipe
+                    recipe={recipe}
+                    pan={pan}
+                    numPizzas={numPizzas}
+                    unitSystem={unitSystem}
+                  />
+                }
+              >
+                Download PDF
+              </PDFDownloadLink>
+            </Button>
           )}
-        </tbody>
-      </table>
+        </div>
 
-      {totalFlourWeight && (
-        <>
-          <h3>Instructions</h3>
-          <ol>
-            {recipeSteps.map((step, index) => (
-              <li key={index}>{step}</li>
-            ))}
-          </ol>
-        </>
-      )}
-    </>
+        <Table className="my-6">
+          <TableHeader>
+            <TableRow>
+              <TableHead>Ingredient</TableHead>
+              <TableHead>Weight (grams)</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {recipe && (
+              <>
+                {Object.keys(recipe).map((key) => (
+                  <TableRow key={key}>
+                    <TableCell className="lowercase first-letter:capitalize">
+                      {key.replace(/([A-Z])/g, ' $1').trim()}
+                    </TableCell>
+                    <TableCell>{recipe[key as keyof typeof recipe]}</TableCell>
+                  </TableRow>
+                ))}
+              </>
+            )}
+          </TableBody>
+        </Table>
+
+        {recipe && (
+          <>
+            <h2>Instructions</h2>
+            <ol className="list-decimal my-6 ml-6">
+              {recipeSteps.map((step, index) => (
+                <li className="mt-6 text-lg" key={index}>
+                  {step}
+                </li>
+              ))}
+            </ol>
+          </>
+        )}
+      </section>
+    </main>
   )
 }
 
