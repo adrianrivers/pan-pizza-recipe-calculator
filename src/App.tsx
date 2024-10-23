@@ -131,128 +131,138 @@ function App() {
   }
 
   return (
-    <main className="w-full max-w-screen-lg mx-auto px-12 py-12">
-      <h1>Pan Pizza Recipe Calculator</h1>
+    <>
+      <header>
+        <div className="mx-auto w-full max-w-screen-lg px-12 py-12">
+          <h1>Pan Pizza Recipe Calculator</h1>
+        </div>
+        <div className="relative h-96 bg-hero bg-repeat" />
+      </header>
+      <main className="mx-auto w-full max-w-screen-lg px-12 py-12">
+        <section className="mb-12 rounded border-4 border-yellow-200 p-12">
+          <h2>Your specifications</h2>
 
-      <section className="my-12 p-12 border rounded border-gray-100">
-        <Table className="my-6">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Measurement</TableHead>
-              <TableHead>Input</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell>Width ({measurement})</TableCell>
-              <TableCell>
-                <Input
-                  type="number"
-                  value={pan.w || ''}
-                  name="w"
-                  onChange={handleChange}
-                />
-              </TableCell>
-            </TableRow>
+          <Table className="my-6">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Measurement</TableHead>
+                <TableHead>Input</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableCell>Width ({measurement})</TableCell>
+                <TableCell>
+                  <Input
+                    type="number"
+                    value={pan.w || ''}
+                    name="w"
+                    onChange={handleChange}
+                  />
+                </TableCell>
+              </TableRow>
 
-            <TableRow>
-              <TableCell>Length ({measurement})</TableCell>
-              <TableCell>
-                <Input
-                  type="number"
-                  value={pan.l || ''}
-                  name="l"
-                  onChange={handleChange}
-                />
-              </TableCell>
-            </TableRow>
+              <TableRow>
+                <TableCell>Length ({measurement})</TableCell>
+                <TableCell>
+                  <Input
+                    type="number"
+                    value={pan.l || ''}
+                    name="l"
+                    onChange={handleChange}
+                  />
+                </TableCell>
+              </TableRow>
 
-            <TableRow>
-              <TableCell>Number of pizzas</TableCell>
-              <TableCell>
-                <Input
-                  required
-                  min={1}
-                  type="number"
-                  value={numPizzas || ''}
-                  name="numPizzas"
-                  onChange={(e) => setNumPizzas(Number(e.target.value))}
-                />
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+              <TableRow>
+                <TableCell>Number of pizzas</TableCell>
+                <TableCell>
+                  <Input
+                    required
+                    min={1}
+                    type="number"
+                    value={numPizzas || ''}
+                    name="numPizzas"
+                    onChange={(e) => setNumPizzas(Number(e.target.value))}
+                  />
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
 
-        <Select onValueChange={(value) => setUnitSystem(value as UnitSystem)}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue defaultValue={'metric'} placeholder="Metric" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="metric">Metric</SelectItem>
-            <SelectItem value="imperial">Imperial</SelectItem>
-          </SelectContent>
-        </Select>
-      </section>
+          <Select onValueChange={(value) => setUnitSystem(value as UnitSystem)}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue defaultValue={'metric'} placeholder="Metric" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="metric">Metric</SelectItem>
+              <SelectItem value="imperial">Imperial</SelectItem>
+            </SelectContent>
+          </Select>
+        </section>
 
-      <section className="my-12 p-12 border border-gray-100 rounded">
-        <div className="flex justify-between">
-          <h2>Dough Recipe</h2>
+        <section className="my-12 rounded border-4 border-red-200 p-12">
+          <div className="flex justify-between">
+            <h2>Dough Recipe</h2>
+
+            {recipe && (
+              <Button asChild variant="outline">
+                <PDFDownloadLink
+                  document={
+                    <Recipe
+                      recipe={recipe}
+                      pan={pan}
+                      numPizzas={numPizzas}
+                      unitSystem={unitSystem}
+                    />
+                  }
+                >
+                  Download PDF
+                </PDFDownloadLink>
+              </Button>
+            )}
+          </div>
+
+          <Table className="my-6">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Ingredient</TableHead>
+                <TableHead>Weight (grams)</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {recipe && (
+                <>
+                  {Object.keys(recipe).map((key) => (
+                    <TableRow key={key}>
+                      <TableCell className="lowercase first-letter:capitalize">
+                        {key.replace(/([A-Z])/g, ' $1').trim()}
+                      </TableCell>
+                      <TableCell>
+                        {recipe[key as keyof typeof recipe]}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </>
+              )}
+            </TableBody>
+          </Table>
 
           {recipe && (
-            <Button asChild variant="outline">
-              <PDFDownloadLink
-                document={
-                  <Recipe
-                    recipe={recipe}
-                    pan={pan}
-                    numPizzas={numPizzas}
-                    unitSystem={unitSystem}
-                  />
-                }
-              >
-                Download PDF
-              </PDFDownloadLink>
-            </Button>
-          )}
-        </div>
-
-        <Table className="my-6">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Ingredient</TableHead>
-              <TableHead>Weight (grams)</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {recipe && (
-              <>
-                {Object.keys(recipe).map((key) => (
-                  <TableRow key={key}>
-                    <TableCell className="lowercase first-letter:capitalize">
-                      {key.replace(/([A-Z])/g, ' $1').trim()}
-                    </TableCell>
-                    <TableCell>{recipe[key as keyof typeof recipe]}</TableCell>
-                  </TableRow>
+            <>
+              <h2>Instructions</h2>
+              <ol className="my-6 ml-6 list-decimal">
+                {recipeSteps.map((step, index) => (
+                  <li className="mt-6 text-lg" key={index}>
+                    {step}
+                  </li>
                 ))}
-              </>
-            )}
-          </TableBody>
-        </Table>
-
-        {recipe && (
-          <>
-            <h2>Instructions</h2>
-            <ol className="list-decimal my-6 ml-6">
-              {recipeSteps.map((step, index) => (
-                <li className="mt-6 text-lg" key={index}>
-                  {step}
-                </li>
-              ))}
-            </ol>
-          </>
-        )}
-      </section>
-    </main>
+              </ol>
+            </>
+          )}
+        </section>
+      </main>
+    </>
   )
 }
 
