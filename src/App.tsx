@@ -138,7 +138,7 @@ function App() {
   }
 
   return (
-    <div className="bg-gooey-pizza animate-scroll">
+    <div className="bg-gooey-pizza">
       <header className="mx-auto w-full max-w-screen-lg px-12 pt-12">
         <span className="inline-block bg-yellow-400 px-4 py-2">
           <h1 className="text-red-500">Pan Pizza Recipe Calculator</h1>
@@ -195,7 +195,7 @@ function App() {
                     name="numPizzas"
                     onChange={(e) => {
                       reward()
-                      setNumPizzas(Number(e.target.value))
+                      setNumPizzas(Number(e.currentTarget.value))
                     }}
                   />
                 </TableCell>
@@ -253,7 +253,7 @@ function App() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {recipe && (
+              {recipe ? (
                 <>
                   {Object.keys(recipe).map((key) => (
                     <TableRow key={key}>
@@ -266,22 +266,32 @@ function App() {
                     </TableRow>
                   ))}
                 </>
+              ) : (
+                <p className="p-4">Please enter your specifications</p>
               )}
             </TableBody>
           </Table>
 
-          {recipe && (
-            <>
-              <h2>Instructions</h2>
-              <ol className="my-6 ml-8 list-decimal md:ml-6">
-                {recipeSteps.map((step, index) => (
-                  <li className="mt-6 text-base" key={index}>
-                    {step}
-                  </li>
-                ))}
-              </ol>
-            </>
-          )}
+          <>
+            <h2>Instructions</h2>
+            <ol className="my-6 ml-8 list-decimal md:ml-6">
+              {recipeSteps.map((step, index) => (
+                <li className="mt-6 text-base" key={index}>
+                  {step}
+                </li>
+              ))}
+            </ol>
+          </>
+
+          <iframe
+            className="w-full"
+            height="500"
+            src="https://www.youtube.com/embed/CJEoASUMZbI?si=ki4_O-x0P5x3YSeL"
+            title="YouTube video player"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+          />
         </section>
       </main>
     </div>
