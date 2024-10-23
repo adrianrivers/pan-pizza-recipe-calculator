@@ -1,0 +1,16 @@
+export const recipeSteps = [
+  'In a large bowl, mix all the ingredients except for the salt until thoroughly incorporated. Cover the bowl and let the dough rest for 20 minutes.',
+  'Add the salt and work it into the dough.',
+  'Cover the bowl and allow the dough to rise until it has grown in size by about 50%. This will take about 1-2 hours. During this time, come back every 20 minutes to perform a set of stretch-and-folds (perform up to 4 sets). If the dough hasn’t grown by 50% after the 4th set, let it rest at room temperature until it has.',
+  'Transfer the dough to the refrigerator to rest for 1-4 days (2 or 3 days is ideal).',
+  'On the morning of baking (about 3-4 hours before baking), prepare your Detroit-style pizza pans by coating them with a thin layer of neutral oil.',
+  'Remove the dough from the refrigerator, divide it into your desired number of portions, form each one into a taut ball, and place it into its own pizza pan.',
+  "Stretch the dough to the edges of the pan. (It may shrink back toward the center, but that's okay.)",
+  'Cover the dough and let it rest for 30 minutes. Then, stretch the dough further to the edges. Repeat this every 30 minutes until the dough stays in the corners of the pan.',
+  'Cover the dough and let it rise until it is soft and airy (about 2-3 times in size from when it was removed from the fridge). This should take about 1-2 hours.',
+  'When the dough is about 30 minutes from being ready, preheat your oven to the highest possible temperature, and set the oven rack to the middle setting.',
+  "Partially top the dough, starting with a layer of pepperoni (if using), followed by a very light layer of cheese, being careful not to put too much cheese near the edges. Bake for 7-8 minutes at your oven's highest temperature.",
+  "Remove the pizza from the oven, and finish topping it by placing the rest of the cheese, focusing on the edges, followed by the sauce in a 'racing stripe' pattern, and any additional toppings you want to use.",
+  'Finish baking the pizza at the highest temperature for another 4-5 minutes until the cheese at the edges is browned to your liking.',
+  'Remove the pizza from the pan as soon as possible after taking it out of the oven. Ideally, place the pizza onto a wire rack to cool for a few minutes before cutting into it.',
+]

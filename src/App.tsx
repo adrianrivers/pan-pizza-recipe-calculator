@@ -1,19 +1,20 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState } from 'react'
+import { recipeSteps } from './steps/pan-pizza-steps'
 
-type UnitSystem = "metric" | "imperial";
+type UnitSystem = 'metric' | 'imperial'
 
 interface PizzaDoughPercentage {
-  breadFlour: number;
-  wholemealFlour?: number;
-  diastaticMaltPowder: number;
-  yeast: number;
-  water: number;
-  salt: number;
+  breadFlour: number
+  wholemealFlour?: number
+  diastaticMaltPowder: number
+  yeast: number
+  water: number
+  salt: number
 }
 
 interface Pan {
-  w: number;
-  l: number;
+  w: number
+  l: number
 }
 
 const seventyFivePercent: PizzaDoughPercentage = {
@@ -23,89 +24,89 @@ const seventyFivePercent: PizzaDoughPercentage = {
   yeast: 0.5,
   water: 75,
   salt: 2,
-};
+}
 
 function calculateIngredientWeight(
   totalFlourWeight: number,
   bakersPercentage: number,
-  showDecimal = false
+  showDecimal = false,
 ) {
-  const ingredientWeight = (totalFlourWeight * bakersPercentage) / 100;
+  const ingredientWeight = (totalFlourWeight * bakersPercentage) / 100
 
   return showDecimal
     ? Number(ingredientWeight).toFixed(1)
-    : Math.round(ingredientWeight);
+    : Math.round(ingredientWeight)
 }
 
 function App() {
-  const [pan, setPan] = useState<Pan>({ w: 28, l: 40 });
-  const [numPizzas, setNumPizzas] = useState(1);
-  const [unitSystem, setUnitSystem] = useState<UnitSystem>("metric");
+  const [pan, setPan] = useState<Pan>({ w: 28, l: 40 })
+  const [numPizzas, setNumPizzas] = useState(1)
+  const [unitSystem, setUnitSystem] = useState<UnitSystem>('metric')
 
-  const measurement = unitSystem === "metric" ? "cm" : "in";
+  const measurement = unitSystem === 'metric' ? 'cm' : 'in'
 
   const panDoughVolume = useMemo(() => {
-    if (!pan.w || !pan.l || !numPizzas) return 0;
-    let panArea = 0;
+    if (!pan.w || !pan.l || !numPizzas) return 0
+    let panArea = 0
 
-    if (unitSystem === "metric") {
-      panArea = (pan.w / 2.54) * (pan.l / 2.54);
+    if (unitSystem === 'metric') {
+      panArea = (pan.w / 2.54) * (pan.l / 2.54)
     } else {
-      panArea = pan.w * pan.l;
+      panArea = pan.w * pan.l
     }
 
-    return panArea * 0.1035 * 28.35 * numPizzas;
-  }, [pan, unitSystem, numPizzas]);
+    return panArea * 0.1035 * 28.35 * numPizzas
+  }, [pan, unitSystem, numPizzas])
 
   const totalFlourWeight = useMemo(() => {
-    if (!panDoughVolume) return 0;
+    if (!panDoughVolume) return 0
 
     const bakerPercentTotal = Object.values(seventyFivePercent).reduce(
       (sum, value) => sum + value,
-      0
-    );
+      0,
+    )
 
-    return (panDoughVolume * 100) / bakerPercentTotal;
-  }, [panDoughVolume]);
+    return (panDoughVolume * 100) / bakerPercentTotal
+  }, [panDoughVolume])
 
   const recipe = useMemo(() => {
-    if (!totalFlourWeight) return null;
+    if (!totalFlourWeight) return null
 
     return {
-      ["bread-flour"]: calculateIngredientWeight(
+      ['bread-flour']: calculateIngredientWeight(
         totalFlourWeight,
-        seventyFivePercent.breadFlour
+        seventyFivePercent.breadFlour,
       ),
-      ["wholemeal-flour"]: calculateIngredientWeight(
+      ['wholemeal-flour']: calculateIngredientWeight(
         totalFlourWeight,
-        seventyFivePercent?.wholemealFlour ?? 0
+        seventyFivePercent?.wholemealFlour ?? 0,
       ),
-      ["diastatic-malt-powder"]: calculateIngredientWeight(
+      ['diastatic-malt-powder']: calculateIngredientWeight(
         totalFlourWeight,
         seventyFivePercent.diastaticMaltPowder,
-        true
+        true,
       ),
       yeast: calculateIngredientWeight(
         totalFlourWeight,
         seventyFivePercent.yeast,
-        true
+        true,
       ),
       water: calculateIngredientWeight(
         totalFlourWeight,
-        seventyFivePercent.water
+        seventyFivePercent.water,
       ),
       salt: calculateIngredientWeight(
         totalFlourWeight,
         seventyFivePercent.salt,
-        true
+        true,
       ),
-    };
-  }, [totalFlourWeight]);
+    }
+  }, [totalFlourWeight])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.currentTarget;
-    setPan((prev) => ({ ...prev, [name]: Number(value) }));
-  };
+    const { name, value } = e.currentTarget
+    setPan((prev) => ({ ...prev, [name]: Number(value) }))
+  }
 
   return (
     <>
@@ -117,16 +118,18 @@ function App() {
         <option value="imperial">Imperial</option>
       </select>
 
-      <table>
+      <table className="border-collapse table-auto w-full text-sm">
         <tbody>
           <tr>
-            <th>Width {measurement}</th>
+            <th className="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left">
+              Width {measurement}
+            </th>
             <td>
               <input
                 required
                 min={1}
                 type="number"
-                value={pan.w || ""}
+                value={pan.w || ''}
                 name="w"
                 onChange={handleChange}
               />
@@ -139,7 +142,7 @@ function App() {
                 type="number"
                 required
                 min={1}
-                value={pan.l || ""}
+                value={pan.l || ''}
                 name="l"
                 onChange={handleChange}
               />
@@ -175,8 +178,8 @@ function App() {
             <>
               {Object.keys(recipe).map((key) => (
                 <tr key={key}>
-                  <td style={{ textTransform: "capitalize" }}>
-                    {key.replace(/-/g, " ")}
+                  <td style={{ textTransform: 'capitalize' }}>
+                    {key.replace(/-/g, ' ')}
                   </td>
                   <td>{recipe[key as keyof typeof recipe]}</td>
                 </tr>
@@ -189,81 +192,15 @@ function App() {
       {totalFlourWeight && (
         <>
           <h3>Instructions</h3>
-
           <ol>
-            <li>
-              In a large bowl, mix all the ingredients except for the salt until
-              thoroughly incorporated. Cover the bowl and let the dough rest for
-              20 minutes.
-            </li>
-            <li>Add the salt and work it into the dough.</li>
-            <li>
-              Cover the bowl and allow the dough to rise until it has grown in
-              size by about 50%. This will take about 1-2 hours. During this
-              time, come back every 20 minutes to perform a set of
-              stretch-and-folds (perform up to 4 sets). If the dough hasn’t
-              grown by 50% after the 4th set, let it rest at room temperature
-              until it has.
-            </li>
-            <li>
-              Transfer the dough to the refrigerator to rest for 1-4 days (2 or
-              3 days is ideal).
-            </li>
-            <li>
-              On the morning of baking (about 3-4 hours before baking), prepare
-              your Detroit-style pizza pans by coating them with a thin layer of
-              neutral oil.
-            </li>
-            <li>
-              Remove the dough from the refrigerator, divide it into your
-              desired number of portions, form each one into a taut ball, and
-              place it into its own pizza pan.
-            </li>
-            <li>
-              Stretch the dough to the edges of the pan. (It may shrink back
-              toward the center, but that's okay.)
-            </li>
-            <li>
-              Cover the dough and let it rest for 30 minutes. Then, stretch the
-              dough further to the edges. Repeat this every 30 minutes until the
-              dough stays in the corners of the pan.
-            </li>
-            <li>
-              Cover the dough and let it rise until it is soft and airy (about
-              2-3 times in size from when it was removed from the fridge). This
-              should take about 1-2 hours.
-            </li>
-            <li>
-              When the dough is about 30 minutes from being ready, preheat your
-              oven to the highest possible temperature, and set the oven rack to
-              the middle setting.
-            </li>
-            <li>
-              Partially top the dough, starting with a layer of pepperoni (if
-              using), followed by a very light layer of cheese, being careful
-              not to put too much cheese near the edges. Bake for 7-8 minutes at
-              your oven's highest temperature.
-            </li>
-            <li>
-              Remove the pizza from the oven, and finish topping it by placing
-              the rest of the cheese, focusing on the edges, followed by the
-              sauce in a "racing stripe" pattern, and any additional toppings
-              you want to use.
-            </li>
-            <li>
-              Finish baking the pizza at the highest temperature for another 4-5
-              minutes until the cheese at the edges is browned to your liking.
-            </li>
-            <li>
-              Remove the pizza from the pan as soon as possible after taking it
-              out of the oven. Ideally, place the pizza onto a wire rack to cool
-              for a few minutes before cutting into it.
-            </li>
+            {recipeSteps.map((step, index) => (
+              <li key={index}>{step}</li>
+            ))}
           </ol>
         </>
       )}
     </>
-  );
+  )
 }
 
-export default App;
+export default App
