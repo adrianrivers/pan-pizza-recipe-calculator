@@ -144,11 +144,11 @@ function App() {
           <h1 className="text-red-500">Pan Pizza Recipe Calculator</h1>
         </span>
       </header>
-      <main className="mx-auto w-full max-w-screen-lg px-12 py-12">
-        <section className="mb-12 rounded border-4 border-yellow-200 bg-white p-12">
+      <main className="mx-auto w-full max-w-screen-lg px-2 py-12 lg:p-12">
+        <section className="mb-12 rounded border-4 border-yellow-200 bg-white p-4 lg:p-12">
           <h2>Your specifications</h2>
 
-          <Table className="my-6">
+          <Table className="my-6 text-base">
             <TableHeader>
               <TableRow>
                 <TableHead>Measurement</TableHead>
@@ -219,13 +219,17 @@ function App() {
           </Select>
         </section>
 
-        <section className="my-12 rounded border-4 border-red-200 bg-white p-12">
+        <section className="my-12 rounded border-4 border-red-200 bg-white p-4 lg:p-12">
           <div className="flex justify-between">
             <h2>Dough Recipe</h2>
 
             {recipe && (
-              <Button asChild variant="outline" onClick={() => reward()}>
+              <Button
+                asChild
+                className="border-yellow-400 bg-red-500 text-white hover:bg-red-400"
+              >
                 <PDFDownloadLink
+                  fileName="pan-pizza-recipe.pdf"
                   document={
                     <Recipe
                       recipe={recipe}
@@ -241,7 +245,7 @@ function App() {
             )}
           </div>
 
-          <Table className="my-6">
+          <Table className="my-6 text-base">
             <TableHeader>
               <TableRow>
                 <TableHead>Ingredient</TableHead>
@@ -269,9 +273,9 @@ function App() {
           {recipe && (
             <>
               <h2>Instructions</h2>
-              <ol className="my-6 ml-6 list-decimal">
+              <ol className="my-6 ml-8 list-decimal md:ml-6">
                 {recipeSteps.map((step, index) => (
-                  <li className="mt-6 text-lg" key={index}>
+                  <li className="mt-6 text-base" key={index}>
                     {step}
                   </li>
                 ))}
