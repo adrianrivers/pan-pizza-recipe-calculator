@@ -2,7 +2,7 @@ import { Pan, PizzaDoughRecipe } from '@/App'
 import { recipeSteps } from '@/steps/pan-pizza-steps'
 import { Page, Text, View, Document } from '@react-pdf/renderer'
 
-export const Recipe = ({
+export const RecipePDF = ({
   recipe,
   pan,
   numPizzas,

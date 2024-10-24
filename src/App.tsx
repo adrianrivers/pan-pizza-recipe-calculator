@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { recipeSteps } from './steps/pan-pizza-steps'
 import {
   Table,
@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/select'
 import { Button } from './components/ui/button'
 import { PDFDownloadLink } from '@react-pdf/renderer'
-import { Recipe } from './components/pdf/recipe'
+import { RecipePDF } from './components/pdf/recipe-pdf'
 import { useReward } from 'react-rewards'
 
 export type UnitSystem = 'metric' | 'imperial'
@@ -101,35 +101,28 @@ function App() {
 
   const measurement = unitSystem === 'metric' ? 'cm' : 'in'
 
-  const panDoughVolume = useMemo(() => {
-    if (!pan.w || !pan.l || !numPizzas) return 0
-    let panArea = 0
+  let panArea
 
-    if (unitSystem === 'metric') {
-      panArea = (pan.w / 2.54) * (pan.l / 2.54)
-    } else {
-      panArea = pan.w * pan.l
-    }
+  if (unitSystem === 'metric') {
+    panArea = (pan.w / 2.54) * (pan.l / 2.54)
+  } else {
+    panArea = pan.w * pan.l
+  }
 
-    return panArea * 0.1035 * 28.35 * numPizzas
-  }, [pan, unitSystem, numPizzas])
+  const panDoughVolume = panArea * 0.1035 * 28.35 * numPizzas
 
-  const totalFlourWeight = useMemo(() => {
-    if (!panDoughVolume) return 0
+  const bakerPercentTotal = Object.values(seventyFivePercent).reduce(
+    (sum, value) => sum + value,
+    0,
+  )
 
-    const bakerPercentTotal = Object.values(seventyFivePercent).reduce(
-      (sum, value) => sum + value,
-      0,
-    )
+  const totalFlourWeight = panDoughVolume
+    ? (panDoughVolume * 100) / bakerPercentTotal
+    : 0
 
-    return (panDoughVolume * 100) / bakerPercentTotal
-  }, [panDoughVolume])
-
-  const recipe = useMemo(() => {
-    if (!totalFlourWeight) return null
-
-    return calculateRecipe(totalFlourWeight, seventyFivePercent)
-  }, [totalFlourWeight])
+  const recipe = totalFlourWeight
+    ? calculateRecipe(totalFlourWeight, seventyFivePercent)
+    : null
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.currentTarget
@@ -231,7 +224,7 @@ function App() {
                 <PDFDownloadLink
                   fileName="pan-pizza-recipe.pdf"
                   document={
-                    <Recipe
+                    <RecipePDF
                       recipe={recipe}
                       pan={pan}
                       numPizzas={numPizzas}
